@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:wisata_candi_andry_final/data/candi_data.dart';
-
-import '../Models/candi.dart';
-import '../models/candi.dart';
+import '../models/candi.dart'; // Sesuaikan dengan struktur folder Anda
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  // TODO : 1. Deklarasikan variabel yang dibutuhkan
+  // Variabel yang diperlukan
   List<Candi> _filteredCandi = candiList;
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
@@ -20,12 +18,11 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO : 2. Buat appBar dengal judul pencarian candi
-      appBar: AppBar(title: Text('Pencarian Candi'),),
-      // TODO : 3. Buat body berupa column
+      appBar: AppBar(
+        title: Text('Pencarian Candi'),
+      ),
       body: Column(
         children: [
-          // TODO : 4. Buat Textfield pencarian sebagai anak dari column
           Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
@@ -34,26 +31,35 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.deepPurple[50],
               ),
               child: TextField(
+                controller: _searchController, // Tambahkan controller
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                    _filteredCandi = candiList.where((candi) {
+                      return candi.name.toLowerCase().contains(_searchQuery);
+                    }).toList();
+                  });
+                },
                 autofocus: false,
                 decoration: InputDecoration(
                   hintText: 'Cari Candi...',
                   prefixIcon: Icon(Icons.search),
-                  border : InputBorder.none,
+                  border: InputBorder.none,
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color : Colors.deepPurple),
+                    borderSide: BorderSide(color: Colors.deepPurple),
                   ),
                   contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12),
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
               ),
             ),
           ),
-          // TODO : 5. Buat listview hasil pencarian sebagai anak dari column
           Expanded(
             child: ListView.builder(
               itemCount: _filteredCandi.length,
-              itemBuilder: (context, index){
+              itemBuilder: (context, index) {
                 final candi = _filteredCandi[index];
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -61,20 +67,28 @@ class _SearchScreenState extends State<SearchScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding : EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8),
                         width: 100,
                         height: 100,
                         child: ClipRRect(
-                            borderRadius : BorderRadius.circular(10),
-                            child: Image.asset(candi.imageAsset, fit: BoxFit.cover,)),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            candi.imageAsset,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(candi.name, style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold,
-                          ),),
-                          SizedBox(height : 4),
+                          Text(
+                            candi.name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
                           Text(candi.location),
                         ],
                       ),
@@ -86,8 +100,6 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ],
       ),
-
-
     );
   }
 }
