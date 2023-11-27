@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/' : (context) => MainScreen(),
+        '/homescreen' : (context) => HomeScreen(),
         // '/detail' : (context) => DetailScreen(candi: candi),
         '/sign_in' : (context) => SignInScreen(),
         '/sign_up' : (context) => SignUpScreen(),

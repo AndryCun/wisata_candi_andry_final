@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisata_candi_andry_final/screens/signUp_screens.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -16,6 +17,14 @@ class _SignInScreenState extends State<SignInScreen> {
   String _errorText = '';
   bool _isSignedIn = false;
   bool _obscurePassword = true;
+
+  void _signIn() async{
+    final SharedPreferences = await SharedPreferences.getInstance();
+    final String savedUsername = prefs.getString('username') ?? '';
+    final String savedPassword = prefs.getString('passwaord') ?? '';
+    final String enteredUsername = _usernameController.text.trim();
+    final String enteredPasswaord = _passwordController.text.trim();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,8 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => SignUpScreen())
+                                Navigator.pushNamed(context, '/signup'
                                 );
                               },
                           )
