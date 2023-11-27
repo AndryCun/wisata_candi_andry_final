@@ -15,23 +15,28 @@ class  DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   bool isFavorite = false;
+  bool isSignedIn = false;
 
-  bool isSignedin = false;
-
-  Future<void>_toggleFavorite() async{
+  Future<void> _toggleFavorite() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // memeriksa apakah pengguna sudah sign ini
-    if(!isSignedin) {
-      Navigator.pushReplacementNamed(context, '/signIn');
+    // memeriksa apakah pengguna sudah sign in
+    if (!isSignedIn) {
+      // jika belum sign in, arahkan ke halaman sign in
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, '/signin');
+      });
       return;
     }
     bool favoriteStatus = !isFavorite;
-    prefs.setBool('favorite${widget.candi.name}', favoriteStatus);
+    prefs.setBool('favorite_${widget.candi.name}', favoriteStatus);
 
     setState(() {
       isFavorite = favoriteStatus;
     });
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +52,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   padding: const EdgeInsets.symmetric(horizontal :16),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image.asset('images/borobudur.jpeg',
+                    child: Image.asset('${widget.candi.imageAsset}',
                       width: double.infinity,
                       height: 200,
                       fit: BoxFit.cover,),
@@ -96,9 +101,13 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                       ),
                       IconButton(
-                        onPressed: _toggleFavorite,
-                        icon: Icon(isSignedin && isFavorite ? Icons.favorite
-                            : Icons.favorite_border),
+                        onPressed: (){
+                          _toggleFavorite();
+                        },
+                        icon: Icon(isSignedIn && isFavorite
+                            ? Icons.favorite
+                            :Icons.favorite_border,
+                          color: isSignedIn && isFavorite ? Colors.red : null,),
                       ),
                     ],
                   ),

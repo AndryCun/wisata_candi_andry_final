@@ -23,10 +23,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/homescreen' : (context) => HomeScreen(),
+        '/' : (context) => MainScreen(),
         // '/detail' : (context) => DetailScreen(candi: candi),
-        '/sign_in' : (context) => SignInScreen(),
-        '/sign_up' : (context) => SignUpScreen(),
+        '/signin' : (context) => SignInScreen(),
+        '/signup' : (context) => SignUpScreen(),
       },
       debugShowCheckedModeBanner: false,
       title: 'Wisata Candi',
@@ -123,7 +123,3 @@ class _MainScreenState extends State<MainScreen> {
 //
 //   ScreenArguments(this.title, this.message);
 // }
-
-
-
-
