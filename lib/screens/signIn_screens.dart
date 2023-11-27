@@ -4,11 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wisata_candi_andry_final/screens/signUp_screens.dart';
 
 class SignInScreen extends StatefulWidget {
-  SignInScreen ({super.key});
+  SignInScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  _SignInScreenState createState() => _SignInScreenState();
 }
+
 class _SignInScreenState extends State<SignInScreen> {
   // TODO : 1. Deklarasi Variabel
   final TextEditingController _usernameController = TextEditingController();
@@ -18,19 +19,53 @@ class _SignInScreenState extends State<SignInScreen> {
   bool _isSignedIn = false;
   bool _obscurePassword = true;
 
-  void _signIn() async{
-    final SharedPreferences = await SharedPreferences.getInstance();
+  void _signIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String savedUsername = prefs.getString('username') ?? '';
-    final String savedPassword = prefs.getString('passwaord') ?? '';
+    final String savedPassword = prefs.getString('password') ?? '';
     final String enteredUsername = _usernameController.text.trim();
-    final String enteredPasswaord = _passwordController.text.trim();
+    final String enteredPassword = _passwordController.text.trim();
+
+    if (enteredUsername.isEmpty || enteredPassword.isEmpty) {
+      setState(() {
+        _errorText = 'Nama Pengguna dan kata sandi tidak boleh kosong';
+      });
+      return;
+    }
+
+    if (savedUsername.isEmpty || savedPassword.isEmpty) {
+      setState(() {
+        _errorText = 'Pengguna belum terdaftar. Silakan daftar terlebih dahulu';
+      });
+      return;
+    }
+
+    if (enteredUsername == savedUsername && enteredPassword == savedPassword) {
+      setState(() {
+        _errorText = '';
+        _isSignedIn = true;
+        prefs.setBool('isSignedIn', true);
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacementNamed(context, '/');
+      });
+    } else {
+      setState(() {
+        _errorText = 'Nama Pengguna atau kata sandi salah';
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       // TODO : 2. Pasang Appbar
-      appBar: AppBar(title: Text('Sign In'),),
+      appBar: AppBar(
+        title: Text('Sign In'),
+      ),
       // TODO : 3. Pasang body
       body: Center(
         child: SingleChildScrollView(
@@ -58,13 +93,14 @@ class _SignInScreenState extends State<SignInScreen> {
                     errorText: _errorText.isNotEmpty ? _errorText : null,
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      onPressed: (){
-                        setState((){
+                      onPressed: () {
+                        setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
                       },
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility_off
+                        _obscurePassword
+                            ? Icons.visibility_off
                             : Icons.visibility,
                       ),
                     ),
@@ -74,53 +110,31 @@ class _SignInScreenState extends State<SignInScreen> {
                 // TODO : 7. Pasang ElevatedButton Sign In
                 SizedBox(height: 20),
                 ElevatedButton(
-                    onPressed: (){
-                      setState(() {
-                        // if(_passwordController.value.text.length < 8){
-                        //   _errorText = "Password harus lebih dari atau sama dengan 8 karakter";
-                        // } else if(!_passwordController.value.text.contains(RegExp(r'[A-z'))){
-                        //   _errorText = 'Password harus berisi uppercase';
-                        // }else if(!_passwordController.value.text.contains(RegExp(r'[a-z]'))){
-                        //   _errorText = 'Password harus berisi lowercase';
-                        // }else if(!_passwordController.value.text.contains(RegExp(r'[0-9]'))){
-                        //   _errorText = 'Password harus berisi angka';
-                        // }else if(!_passwordController.value.text.contains(RegExp(r'[_/*.,]'))){
-                        //   _errorText = 'Password harus berisi karakter spesial (_/*.,)';
-                        // }else if(
-                        //     _passwordController.value.text.contains(_usernameController.value.text)
-                        // ){
-                        //   _errorText = 'Password harus berisi nama pengguna anda';
-                        // } else {
-                        //   _errorText = '';
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Text('Sign In')),
+                  onPressed: _signIn,
+                  child: Text('Sign In'),
+                ),
                 // TODO : 8. Pasang TextButton Sign Up
                 SizedBox(height: 10),
-                // TextButton(
-                //     onPressed: (){},
-                //     child: Text('Belum punya akun? Daftar di sini.')),
                 RichText(
-                    text: TextSpan(
-                        text: 'Belum punya akun?',
-                        style: TextStyle(fontSize: 16, color: Colors.deepPurple),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: 'Daftar di sini.',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                                fontSize: 16
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.pushNamed(context, '/signup'
-                                );
-                              },
-                          )
-                        ]
-                    ))
+                  text: TextSpan(
+                    text: 'Belum punya akun?',
+                    style: TextStyle(fontSize: 16, color: Colors.deepPurple),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: ' Daftar di sini.',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                          fontSize: 16,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pushNamed(context, '/signup');
+                          },
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
           ),
